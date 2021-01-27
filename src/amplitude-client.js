@@ -226,29 +226,37 @@ AmplitudeClient.prototype.init = function init(apiKey, opt_userId, opt_config, o
                 .concat(this._unsentIdentifys);
             }
             if (DeviceInfo) {
-              Promise.all([
-                DeviceInfo.getCarrier(),
-                DeviceInfo.getModel(),
-                DeviceInfo.getManufacturer(),
-                DeviceInfo.getVersion(),
-                DeviceInfo.getUniqueId(),
-              ])
-                .then((values) => {
-                  this.deviceInfo = {
-                    carrier: values[0],
-                    model: values[1],
-                    manufacturer: values[2],
-                    version: values[3],
-                  };
-                  initFromStorage(values[4]);
-                  this.runQueuedFunctions();
-                  if (type(opt_callback) === 'function') {
-                    opt_callback(this);
-                  }
-                })
-                .catch((err) => {
-                  this.options.onError(err);
-                });
+              DeviceInfo.syncUniqueId().then(
+                (value) => {
+                  console.log('[AMP] synced!', value);
+                  Promise.all([
+                    DeviceInfo.getCarrier(),
+                    DeviceInfo.getModel(),
+                    DeviceInfo.getManufacturer(),
+                    DeviceInfo.getVersion(),
+                    DeviceInfo.getUniqueId(),
+                  ])
+                    .then((values) => {
+                      this.deviceInfo = {
+                        carrier: values[0],
+                        model: values[1],
+                        manufacturer: values[2],
+                        version: values[3],
+                      };
+                      initFromStorage(values[4]);
+                      this.runQueuedFunctions();
+                      if (type(opt_callback) === 'function') {
+                        opt_callback(this);
+                      }
+                    })
+                    .catch((err) => {
+                      this.options.onError(err);
+                    });
+                },
+                (reason) => {
+                  console.error('[AMP] sync failed!', reason);
+                },
+              );
             } else {
               initFromStorage();
               this.runQueuedFunctions();
