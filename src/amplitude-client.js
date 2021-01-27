@@ -228,7 +228,7 @@ AmplitudeClient.prototype.init = function init(apiKey, opt_userId, opt_config, o
             if (DeviceInfo) {
               DeviceInfo.syncUniqueId().then(
                 (value) => {
-                  console.log('[AMP] synced!', value); // Success!
+                  console.log('[AMP] synced!', value);
                   Promise.all([
                     DeviceInfo.getCarrier(),
                     DeviceInfo.getModel(),
@@ -254,7 +254,7 @@ AmplitudeClient.prototype.init = function init(apiKey, opt_userId, opt_config, o
                     });
                 },
                 (reason) => {
-                  console.error('[AMP] sync failed!', reason); // Error!
+                  console.error('[AMP] sync failed!', reason);
                 },
               );
             } else {
